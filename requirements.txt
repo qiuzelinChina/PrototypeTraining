@@ -1,0 +1,11 @@
+Python:
+torch
+numpy
+sklearn
+scipy
+
+
+Matlab:
+FieldTrip
+COCOHA Toolbox (for Fug2018)
+Auditory Modeling Toolbox (for Fug2020/Das-2016)

@@ -1,0 +1,26 @@
+1. Download the original data [1] into this fold. The downloaded files in this fold should contains: S*.mat, stimuli.zip
+2. Unzip stimuli.zip 
+3. Run preprocess_data_raw.mat and you will obtain a folder named "preprocessed", which contains the extracted EEG and corresponding label (./preprocessed/S*_raw.mat).
+4. Run add_wavelet.m to conduct filtering, re-reference and wavelet transform. The output file named "S*_preprocessed.mat" are stored in the preprocessed folder (./preprocessed/S*_preprocessed.mat).
+5. Run get_data_python.py to convert data format. The output file named "S*_preprocessed_py.mat" are stored in the preprocessed folder (./preprocessed/S*_preprocessed_py.mat).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------
+References:
+[1] N. Das, W. Biesmans, A. Bertrand, T. Francart, "The effect of head-related filtering and ear-specific decoding bias on auditory attention detection", Journal of Neural Engineering, vol. 13, 056014,2016. DOI 10.1088/1741-2560/13/5/056014
