@@ -48,7 +48,7 @@ if __name__ == '__main__':
     
     sos = butter(5, [1,9], 'bp', fs=128, output='sos')
     # dataset_path = {'KUL':[], 'DTU':[], 'DS':[]}
-    dataset_path = {'Das2016':[]}
+    dataset_path = {'Fug2020':[]}
 
     for key in dataset_path.keys():
         all_files = glob.glob(f'preprocessed/S***preprocessed.mat')
