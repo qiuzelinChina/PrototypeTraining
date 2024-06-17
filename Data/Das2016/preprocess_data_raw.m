@@ -120,7 +120,7 @@ for subject = subjects
         right = envelope(1:length(trial.RawData.EegData),:);
         [audio_right, fs_wav] = audioread(['stimuli' filesep  trial.stimuli{2}(1:stimname_len) '_dry.wav' ]);
         audio_right = resample(audio_right, 8000, 44100);
-        audio_right = audio_left(1: ceil(length(trial.RawData.EegData) / 128 * 8000));
+        audio_right = audio_right(1: ceil(length(trial.RawData.EegData) / 128 * 8000));
         
         
         trial.Envelope.AudioData = cat(3,left, right);

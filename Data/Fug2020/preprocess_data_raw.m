@@ -147,8 +147,7 @@ for subid = [21]
         
                
         
-        % We have now all of the wavfiles in one single cell. Extract audio
-        % features from these wavefiles:
+
         audiofeat = {};
         audiofeat_lp32 = {};
         for trial = 1 : size(wav_files,1)
@@ -178,15 +177,12 @@ for subid = [21]
             
         end
         
-        
         % The subseqent audio representations will be stored in <audiodat> 
         % (taking into account the fact that sub-024 has data from two runs).
         audiodat = cat(1,audiodat,audiofeat);
         
     end
     
-    
-
     % Append EEG data from the two runs for sub-024 
     if numel(eegdat)==2
         cfg = [];
@@ -197,30 +193,6 @@ for subid = [21]
         eegdat = eegdat{1};
 
     end
-    
-    
-    
-  
-    % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    % Stimulus-response analysis
-    % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    % Train stimulus-reconstruction model. Here, we focus on stimulus
-    % reconstruction models with lambda parameters ranging between 10^(-3)
-    % and 10^6. The models cover a range of lags ranging between 0 ms post
-    % stimulus and 500 ms post stimulus
-    
-    tmin                    = 0;
-    tmax                    = 500;
-    fsr                     = 64;
-    map                     = -1;
-    lambda                  = logspace(-3,6,50);
     
     % Identify which trials that are considered to be single-talker
     
@@ -279,75 +251,39 @@ for subid = [21]
         end
     end
     num_trial = length(two_talker_trials);
-    
-    
-    
-    
-
-
     data = struct;
-
     data.eeg = cell(num_trial, 1);
-    data.eeg_lp8 = cell(num_trial, 1);
-    data.eeg_lp32 = cell(num_trial, 1);
-    data.eeg_delta = cell(num_trial, 1);
-    data.eeg_theta = cell(num_trial, 1);
-    data.eeg_alpha = cell(num_trial, 1);
-    data.eeg_beta = cell(num_trial, 1);
-    data.eeg_gamma = cell(num_trial, 1);
-
     data.wav = cell(num_trial, 2);
-    data.envelope_lp8 = cell(num_trial, 2);
-    data.envelope_lp32 = cell(num_trial, 2);
     data.attend_mf = zeros(num_trial, 1);
     data.attend_lr = zeros(num_trial, 1);
     for i = 1:numel(two_talker_trials)
         attend_mf = bdf_events_cp.attend_male_female(two_talker_trials(i), 1);
         attend_lr = bdf_events_cp.attend_left_right(two_talker_trials(i), 1);
         if strcmp(attend_mf, 'attendmale')
-            
 
-            
-            data.attend_mf(i) = 0;
-            
-            wav_0 = mean(resample(wav_files{two_talker_trials(i), 1}, 8000, 44100), 2);
-            wav_1 = mean(resample(wav_files{two_talker_trials(i), 2}, 8000, 44100), 2);
-            data.wav{i, 1} = wav_0(6*8000+1: 43*8000, :);
-            data.wav{i, 2} = wav_1(6*8000+1: 43*8000, :);
-
-            data.envelope_lp8{i, 1} = audiofeat{two_talker_trials(i), 1};
-            data.envelope_lp8{i, 2} = audiofeat{two_talker_trials(i), 2};
-            
-            data.envelope_lp32{i, 1} = audiofeat_lp32{two_talker_trials(i), 1};
-            data.envelope_lp32{i, 2} = audiofeat_lp32{two_talker_trials(i), 2};
-            
-            
-            Trials.target_gender(i) = 1;
-            
-            
+            data.attend_mf(i) = 0;                      
+            Trials.target_gender(i) = 1;     
         else
-            data.attend_mf(i) = 1;
 
-            wav_0 = mean(resample(wav_files{two_talker_trials(i), 2}, 8000, 44100), 2);
-            wav_1 = mean(resample(wav_files{two_talker_trials(i), 1}, 8000, 44100), 2);
-            data.wav{i, 1} = wav_0(6*8000+1: 43*8000, :);
-            data.wav{i, 2} = wav_1(6*8000+1: 43*8000, :);
-
-            data.envelope_lp8{i, 1} = audiofeat{two_talker_trials(i), 2};
-            data.envelope_lp8{i, 2} = audiofeat{two_talker_trials(i), 1};
-            data.envelope_lp32{i, 1} = audiofeat_lp32{two_talker_trials(i), 2};
-            data.envelope_lp32{i, 2} = audiofeat_lp32{two_talker_trials(i), 1};
-            
+            data.attend_mf(i) = 1;       
             Trials.target_gender(i) = 0;
         end
         data.eeg{i, 1} = eegdat.trial{1, two_talker_trials(i)};
         
         if strcmp(attend_lr, 'attendleft')
             data.attend_lr(i) = 0;
+            wav_0 = mean(resample(wav_files{two_talker_trials(i), 1}, 8000, 44100), 2);
+            wav_1 = mean(resample(wav_files{two_talker_trials(i), 2}, 8000, 44100), 2);
+            data.wav{i, 1} = wav_0(6*8000+1: 43*8000, :);
+            data.wav{i, 2} = wav_1(6*8000+1: 43*8000, :);
             Trials.target_direction(i) = 0;
         else
             data.attend_lr(i) = 1;
             Trials.target_direction(i) = 1;
+            wav_0 = mean(resample(wav_files{two_talker_trials(i), 2}, 8000, 44100), 2);
+            wav_1 = mean(resample(wav_files{two_talker_trials(i), 1}, 8000, 44100), 2);
+            data.wav{i, 1} = wav_0(6*8000+1: 43*8000, :);
+            data.wav{i, 2} = wav_1(6*8000+1: 43*8000, :);
         end
         
         %%%%%%%%%%%%
@@ -362,46 +298,20 @@ for subid = [21]
     
     %st
     num_trial_st = length(single_talker_trials);
-
-    
-
     data.eeg_st = cell(num_trial_st, 1);
-    
-
     data.wav_st = cell(num_trial_st, 1);
-    data.envelope_st_lp8 = cell(num_trial_st, 1);
-    data.envelope_st_lp32 = cell(num_trial_st, 1);
    
     for i = 1:numel(single_talker_trials)
         
-     
-
-        wav_0 = mean(resample(wav_files{single_talker_trials(i), 1}, 16000, 44100), 2);
-       
-        data.wav_st{i, 1} = wav_0(6*16000+1: 43*16000, :);
-        
-
-        data.envelope_st_lp8{i, 1} = audiofeat{single_talker_trials(i), 1};
-        
-
-        data.envelope_st_lp32{i, 1} = audiofeat_lp32{single_talker_trials(i), 1};
-       
-       
+        wav_0 = mean(resample(wav_files{single_talker_trials(i), 1}, 16000, 44100), 2);    
+        data.wav_st{i, 1} = wav_0(6*16000+1: 43*16000, :);      
         data.eeg_st{i, 1} = eegdat.trial{1, single_talker_trials(i)};
         
     end
     data.single_talker_trials = single_talker_trials;
-    
-    
-    
-    
-    
-    
     name = [preprocessed_folder filesep 'S' num2str(subid), '_raw.mat'];
     save(name, 'Trials');
-    
-    
-    
+      
 end
     
         
