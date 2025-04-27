@@ -10,9 +10,9 @@ To run the code, you need to do the following:
 
 0. Install the the requirements.
 
-1. Download the three datasets into `./Data/Das2016`, `./Data/Fug2018`, `./Data/Fug2020`, respectively.
+1. Download the dataset into `./Data/Das2016` (Here we use Das-2016 as an example, you can process the other datasets in the same way).
 
-2. Read files `./Data/get_data_for_Das-2016.txt`, `./Data/get_data_for_Fug-2018.txt`,`./Data/get_data_for_Fug-2020.txt `and preprocesse the data accordingly.
+2. Read files `./Data/get_data_for_Das-2016.txt and preprocesse the data accordingly.
 
 3. Change the "base_path" and "DEVICE" in `./utils/cfg.py` according to your environment. "DEVICE" must be 'cpu' or 'cuda'.
 
